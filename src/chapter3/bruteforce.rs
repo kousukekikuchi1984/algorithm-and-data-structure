@@ -48,12 +48,14 @@ pub fn max_distance(nums: Vec<u32>) -> u32 {
     return max.abs_diff(min);
 }
 
-pub fn devide_two(nums: &mut Vec<u32>) -> u32 {
+pub fn divide_two(nums: Vec<u32>) -> u32 {
+    let mut numbers = nums.to_vec();
     let mut j = 0;
     loop {
-        for (i, num) in nums.iter().enumerate() {
-            if num % 2 == 0 {
-                std::mem::replace(&mut nums[i], num / 2);
+        for num in &mut numbers {
+            if *num % 2 == 0 {
+                *num /= 2;
+                continue;
             } else {
                 return j;
             }
@@ -62,9 +64,24 @@ pub fn devide_two(nums: &mut Vec<u32>) -> u32 {
     }
 }
 
+pub fn num_of_three_integers(k: u32, n: u32) -> u32 {
+    let mut counter = 0;
+    for x in 1..=k {
+        for y in 1..=k {
+            let z = n - (x + y);
+            if z <= k {
+                counter += 1;
+            }
+        }
+    }
+    return counter;
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{found, found_counter, max_distance, second_min};
+    use super::{
+        divide_two, found, found_counter, max_distance, num_of_three_integers, second_min,
+    };
     #[test]
     fn test_found() {
         assert_eq!(found(vec![1, 2, 3, 1, 2], 1), 3);
@@ -87,5 +104,17 @@ mod tests {
     fn test_max_distance() {
         assert_eq!(max_distance(vec![1, 2, 3, 4, 5]), 4);
         assert_eq!(max_distance(vec![5, 0, 3, 4, 2]), 5);
+    }
+
+    #[test]
+    fn test_devide_two() {
+        assert_eq!(divide_two(vec![2, 4, 6, 8]), 1);
+        assert_eq!(divide_two(vec![8, 16, 32, 64]), 3);
+    }
+
+    #[test]
+    fn test_num_of_three_integers() {
+        assert_eq!(num_of_three_integers(3, 9), 1);
+        assert_eq!(num_of_three_integers(3, 8), 3);
     }
 }
