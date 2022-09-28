@@ -77,10 +77,33 @@ pub fn num_of_three_integers(k: u32, n: u32) -> u32 {
     return counter;
 }
 
+pub fn sum_of_multiple_sum(s: String) -> u32 {
+    let length = s.len() - 1;
+    let mut result: u32 = 0;
+    let chars: Vec<char> = s.chars().collect();
+
+    for bit in 0..1 << length {
+        let mut sum = 0;
+        let mut num = chars[0].to_digit(10).unwrap() as u32;
+
+        for i in 0..length {
+            if bit & (1 << i) != 0 {
+                sum += num;
+                num = 0;
+            }
+            num = num * 10 + chars[i + 1 as usize].to_digit(10).unwrap() as u32;
+        }
+        sum += num;
+        result += sum;
+    }
+    return result;
+}
+
 #[cfg(test)]
 mod tests {
     use super::{
         divide_two, found, found_counter, max_distance, num_of_three_integers, second_min,
+        sum_of_multiple_sum,
     };
     #[test]
     fn test_found() {
@@ -116,5 +139,10 @@ mod tests {
     fn test_num_of_three_integers() {
         assert_eq!(num_of_three_integers(3, 9), 1);
         assert_eq!(num_of_three_integers(3, 8), 3);
+    }
+
+    #[test]
+    fn test_sum_of_multiple_sum() {
+        assert_eq!(sum_of_multiple_sum(String::from("125")), 176);
     }
 }
