@@ -48,32 +48,45 @@ pub fn number_753(k: u32) -> u32 {
     return count as u32;
 }
 
-pub fn partial_sum(nums: Vec<i32>, w: i32) -> bool {
-    fn _partial_sum(i: usize, nums: &Vec<i32>, w: i32) -> bool {
+pub fn subset_sum(nums: Vec<i32>, w: i32) -> bool {
+    let mut memo: Vec<Vec<i32>> = vec![vec![-1; w as usize]; nums.len() as usize];
+    fn _subset_sum(i: usize, nums: &Vec<i32>, w: i32, memo: &mut Vec<Vec<i32>>) -> bool {
         if i == 0 {
             return w == 0;
         }
+        if w < 0 {
+            return false;
+        }
+
+        let widx = (w - 1) as usize;
+        println!("i, w = {}, {}", i, w);
+        if memo[i - 1][widx] != -1 {
+            return memo[i - 1][widx] == 1;
+        }
 
         // selected
-        if _partial_sum(i - 1, nums, w - nums[i - 1]) {
+        if _subset_sum(i - 1, nums, w - nums[i - 1], memo) {
+            memo[i - 1][widx] = 1;
             return true;
         }
 
         // not selected
-        if _partial_sum(i - 1, nums, w) {
+        if _subset_sum(i - 1, nums, w, memo) {
+            memo[i - 1][widx] = 1;
             return true;
         }
 
+        memo[i - 1][widx] = 0;
         return false;
     }
 
-    return _partial_sum(nums.len(), &nums, w);
+    return _subset_sum(nums.len(), &nums, w, &mut memo);
 }
 
 #[cfg(test)]
 mod tests {
 
-    use super::{memorized_tribonacci, number_753, partial_sum, tribonacci};
+    use super::{memorized_tribonacci, number_753, subset_sum, tribonacci};
 
     #[test]
     fn test_tribonacci() {
@@ -96,8 +109,8 @@ mod tests {
     }
 
     #[test]
-    fn test_partial_sum() {
-        assert_eq!(partial_sum(vec![1, 3, 8], 9), true);
-        assert_eq!(partial_sum(vec![1, 3, 7], 9), false);
+    fn test_subset_sum() {
+        assert_eq!(subset_sum(vec![1, 3, 8], 9), true);
+        assert_eq!(subset_sum(vec![1, 3, 7], 9), false);
     }
 }
