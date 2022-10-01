@@ -134,10 +134,35 @@ pub fn frog_recursive(costs: Vec<u32>) -> u32 {
     return _frog(costs.len() - 1, &costs, &mut cost_table);
 }
 
+pub fn knapsack(weights: Vec<u32>, values: Vec<u32>, max_weight: u32, n: usize) -> u32 {
+    let maxw: u32 = weights.iter().sum();
+
+    let mut cost_table = vec![vec![0; maxw as usize]; n + 10];
+    for i in 0..n {
+        println!(
+            "i, weights[i], values[i] {}, {}. {}",
+            i, weights[i], values[i]
+        );
+        for w in 0..maxw {
+            if w >= weights[i] {
+                cost_table[i + 1][w as usize] = u32::max(
+                    cost_table[i][w as usize],
+                    cost_table[i][(w - weights[i]) as usize] + values[i],
+                );
+            } else {
+                cost_table[i + 1][w as usize] = cost_table[i][w as usize];
+            }
+        }
+    }
+    return cost_table[n][max_weight as usize];
+}
+
 #[cfg(test)]
 mod tests {
 
-    use super::{frog, frog_distribute, frog_naive_recursive, frog_recursive, frog_relaxsation};
+    use super::{
+        frog, frog_distribute, frog_naive_recursive, frog_recursive, frog_relaxsation, knapsack,
+    };
 
     #[test]
     fn test_frog() {
@@ -167,5 +192,14 @@ mod tests {
     fn test_frog_recursive() {
         assert_eq!(frog_recursive(vec![1, 3, 2, 4]), 3);
         assert_eq!(frog_recursive(vec![1, 3, 2, 4]), 3);
+    }
+
+    #[test]
+    fn test_knapsack() {
+        let weights = vec![2, 1, 3, 2, 1, 5];
+        let values = vec![3, 2, 6, 1, 3, 85];
+        let max_weight = 9;
+        let n = weights.len();
+        assert_eq!(knapsack(weights, values, max_weight, n), 94);
     }
 }
