@@ -194,12 +194,33 @@ pub fn edit_distance(from: &str, to: &str) -> u32 {
     return dp[fchars.len()][tchars.len()];
 }
 
+pub fn partition(c: Vec<Vec<u32>>) -> u32 {
+    fn relaxzation(a: &mut u32, b: u32) {
+        if *a > b {
+            *a = b;
+        }
+    }
+
+    let mut dp = vec![std::u32::MAX; c.len()];
+    dp[0] = 0;
+    for i in 0..c.len() {
+        let mut j = 0;
+        while j < i {
+            let calc = dp[j] + c[j][i];
+            relaxzation(&mut dp[i], calc);
+            j += 1;
+        }
+    }
+
+    return dp[c.len() - 1];
+}
+
 #[cfg(test)]
 mod tests {
 
     use super::{
         edit_distance, frog, frog_distribute, frog_naive_recursive, frog_recursive,
-        frog_relaxsation, knapsack,
+        frog_relaxsation, knapsack, partition,
     };
 
     #[test]
@@ -244,5 +265,11 @@ mod tests {
     #[test]
     fn test_edit_distance() {
         assert_eq!(edit_distance("logistic", "algorithm"), 6);
+    }
+
+    #[test]
+    fn test_partition() {
+        let c = vec![vec![1, 2, 3], vec![2, 3, 4], vec![1, 3, 2]];
+        assert_eq!(partition(c), 3);
     }
 }
