@@ -139,10 +139,6 @@ pub fn knapsack(weights: Vec<u32>, values: Vec<u32>, max_weight: u32, n: usize) 
 
     let mut cost_table = vec![vec![0; maxw as usize]; n + 10];
     for i in 0..n {
-        println!(
-            "i, weights[i], values[i] {}, {}. {}",
-            i, weights[i], values[i]
-        );
         for w in 0..maxw {
             if w >= weights[i] {
                 cost_table[i + 1][w as usize] = u32::max(
@@ -157,11 +153,53 @@ pub fn knapsack(weights: Vec<u32>, values: Vec<u32>, max_weight: u32, n: usize) 
     return cost_table[n][max_weight as usize];
 }
 
+pub fn edit_distance(from: &str, to: &str) -> u32 {
+    fn relaxzation(a: &mut u32, b: u32) {
+        if *a > b {
+            *a = b;
+        }
+    }
+
+    let fchars: Vec<char> = from.chars().collect();
+    let tchars: Vec<char> = to.chars().collect();
+    let mut dp = vec![vec![std::u32::MAX; tchars.len() + 1]; fchars.len() + 1];
+    dp[0][0] = 0;
+
+    for i in 0..=fchars.len() {
+        for j in 0..=tchars.len() {
+            // manipulate edit
+            if i > 0 && j > 0 {
+                if fchars[i - 1] == tchars[j - 1] {
+                    let prev = dp[i - 1][j - 1];
+                    relaxzation(&mut dp[i][j], prev);
+                } else {
+                    let prev = dp[i - 1][j - 1] + 1;
+                    relaxzation(&mut dp[i][j], prev);
+                }
+            }
+
+            // deletion
+            if i > 0 {
+                let prev = dp[i - 1][j] + 1;
+                relaxzation(&mut dp[i][j], prev);
+            }
+
+            // insertion
+            if j > 0 {
+                let prev = dp[i][j - 1] + 1;
+                relaxzation(&mut dp[i][j], prev);
+            }
+        }
+    }
+    return dp[fchars.len()][tchars.len()];
+}
+
 #[cfg(test)]
 mod tests {
 
     use super::{
-        frog, frog_distribute, frog_naive_recursive, frog_recursive, frog_relaxsation, knapsack,
+        edit_distance, frog, frog_distribute, frog_naive_recursive, frog_recursive,
+        frog_relaxsation, knapsack,
     };
 
     #[test]
@@ -201,5 +239,10 @@ mod tests {
         let max_weight = 9;
         let n = weights.len();
         assert_eq!(knapsack(weights, values, max_weight, n), 94);
+    }
+
+    #[test]
+    fn test_edit_distance() {
+        assert_eq!(edit_distance("logistic", "algorithm"), 6);
     }
 }
