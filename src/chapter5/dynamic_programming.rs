@@ -73,11 +73,44 @@ fn subset_sum_times(nums: Vec<i32>, w: i32) -> i32 {
     return dp[nums.len() - 1][w as usize];
 }
 
+fn subset_sum_multiple_times(nums: Vec<i32>, w: i32, k: i32) -> bool {
+    let mut dp = vec![vec![std::i32::MAX; w as usize + 1]; nums.len()];
+
+    for n in 0..nums.len() {
+        for val in 0..=w as usize {
+            if n == 0 {
+                if val == 0 {
+                    dp[n][val] = 0;
+                } else if val == nums[n] as usize {
+                    dp[n][val] = 1;
+                }
+            } else {
+                if dp[n - 1][val] != std::i32::MAX {
+                    dp[n][val] = dp[n - 1][val];
+
+                    let selected = val + nums[n] as usize;
+                    if selected <= w as usize {
+                        dp[n][selected] = {
+                            if dp[n][selected] == std::i32::MAX {
+                                1
+                            } else {
+                                dp[n][selected] + 1
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return dp[nums.len() - 1][w as usize] <= k;
+}
+
 #[cfg(test)]
 mod tests {
     use crate::chapter5::dynamic_programming::subset_sum_times;
 
-    use super::{subset_sum, summer_holiday_happiness};
+    use super::{subset_sum, subset_sum_multiple_times, summer_holiday_happiness};
 
     #[test]
     fn test_summer_holiday_happiness() {
@@ -97,5 +130,12 @@ mod tests {
     fn test_subset_sum_times() {
         assert_eq!(subset_sum_times(vec![1, 3, 8], 9), 1);
         assert_eq!(subset_sum_times(vec![1, 3, 8, 6], 9), 2);
+    }
+
+    #[test]
+    fn test_subset_sum_multiple_times() {
+        assert_eq!(subset_sum_multiple_times(vec![1, 3, 5, 6], 9, 2), true);
+        assert_eq!(subset_sum_multiple_times(vec![1, 3, 5, 4], 12, 3), true);
+        assert_eq!(subset_sum_multiple_times(vec![1, 3, 5, 4], 11, 3), false);
     }
 }
