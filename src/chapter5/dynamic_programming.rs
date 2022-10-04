@@ -133,12 +133,40 @@ fn subset_sum_unlimited(nums: Vec<u32>, w: u32) -> bool {
     return dp[nums.len() - 1][w as usize] > 0;
 }
 
+fn subset_sum_limited_times(nums: Vec<u32>, w: u32, m: u32) -> bool {
+    let mut dp = vec![vec![0; w as usize + 1]; nums.len()];
+
+    for n in 0..nums.len() {
+        for val in 0..=w as usize {
+            if n == 0 {
+                let mut i = 0;
+                while i * nums[n] <= w && i <= m {
+                    let score = i * nums[n];
+                    dp[n][score as usize] = 1;
+                    i += 1;
+                }
+            } else {
+                if dp[n - 1][val] > 0 {
+                    let mut i = 0;
+                    while (i * nums[n]) + val as u32 <= w && i <= m {
+                        let score = (i * nums[n]) as usize + val;
+                        dp[n][score as usize] = dp[n - 1][val] + 1;
+                        i += 1;
+                    }
+                }
+            }
+        }
+    }
+    return dp[nums.len() - 1][w as usize] > 0;
+}
+
 #[cfg(test)]
 mod tests {
     use crate::chapter5::dynamic_programming::subset_sum_times;
 
     use super::{
-        subset_sum, subset_sum_multiple_times, subset_sum_unlimited, summer_holiday_happiness,
+        subset_sum, subset_sum_limited_times, subset_sum_multiple_times, subset_sum_unlimited,
+        summer_holiday_happiness,
     };
 
     #[test]
@@ -174,5 +202,12 @@ mod tests {
         assert_eq!(subset_sum_unlimited(vec![3, 5, 7], 31), true); // 7 * 3 + 5 * 2
         assert_eq!(subset_sum_unlimited(vec![3, 5, 7], 13), true); // 3 + 3 + 7
         assert_eq!(subset_sum_unlimited(vec![2, 8, 12], 31), false); // even number cannot create odd nuber
+    }
+
+    #[test]
+    fn test_subset_sum_limited_times() {
+        assert_eq!(subset_sum_limited_times(vec![3, 5, 7], 31, 3), true);
+        assert_eq!(subset_sum_limited_times(vec![1, 3, 5, 7], 35, 3), true);
+        assert_eq!(subset_sum_limited_times(vec![1, 3, 5, 7], 35, 2), false);
     }
 }
