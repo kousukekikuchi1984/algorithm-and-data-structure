@@ -160,13 +160,36 @@ fn subset_sum_limited_times(nums: Vec<u32>, w: u32, m: u32) -> bool {
     return dp[nums.len() - 1][w as usize] > 0;
 }
 
+fn longest_common_sequence(s: &str, v: &str) -> u32 {
+    let mut dp = vec![vec![0; v.len() + 1]; s.len() + 1];
+    for i in 0..s.len() {
+        for j in 0..v.len() {
+            let schar = s.chars().collect::<Vec<char>>()[i];
+            let vchar = v.chars().collect::<Vec<char>>()[j];
+
+            if schar == vchar {
+                dp[i + 1][j + 1] = dp[i][j] + 1;
+            } else {
+                if dp[i][j + 1] > dp[i + 1][j] {
+                    dp[i + 1][j + 1] = dp[i][j + 1];
+                } else {
+                    dp[i + 1][j + 1] = dp[i + 1][j];
+                }
+            }
+        }
+    }
+
+    println!("{:?}", dp);
+    return dp[s.len()][v.len()];
+}
+
 #[cfg(test)]
 mod tests {
     use crate::chapter5::dynamic_programming::subset_sum_times;
 
     use super::{
-        subset_sum, subset_sum_limited_times, subset_sum_multiple_times, subset_sum_unlimited,
-        summer_holiday_happiness,
+        longest_common_sequence, subset_sum, subset_sum_limited_times, subset_sum_multiple_times,
+        subset_sum_unlimited, summer_holiday_happiness,
     };
 
     #[test]
@@ -209,5 +232,11 @@ mod tests {
         assert_eq!(subset_sum_limited_times(vec![3, 5, 7], 31, 3), true);
         assert_eq!(subset_sum_limited_times(vec![1, 3, 5, 7], 35, 3), true);
         assert_eq!(subset_sum_limited_times(vec![1, 3, 5, 7], 35, 2), false);
+    }
+
+    #[test]
+    fn test_longest_common_sequence() {
+        assert_eq!(longest_common_sequence("ABC", "AEBICD"), 3);
+        assert_eq!(longest_common_sequence("DAC", "AEBICD"), 2);
     }
 }
