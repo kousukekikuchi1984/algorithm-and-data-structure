@@ -219,12 +219,10 @@ fn biggest_sum_of_average_partitions(n: Vec<u32>, m: u32) -> f64 {
 
 #[cfg(test)]
 mod tests {
-    use crate::chapter5::dynamic_programming::subset_sum_times;
-
     use super::{
         biggest_sum_of_average_partitions, longest_common_sequence, subset_sum,
-        subset_sum_limited_times, subset_sum_multiple_times, subset_sum_unlimited,
-        summer_holiday_happiness,
+        subset_sum_limited_times, subset_sum_multiple_times, subset_sum_times,
+        subset_sum_unlimited, summer_holiday_happiness,
     };
 
     #[test]
