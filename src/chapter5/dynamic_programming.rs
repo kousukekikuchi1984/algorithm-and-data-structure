@@ -178,9 +178,43 @@ fn longest_common_sequence(s: &str, v: &str) -> u32 {
             }
         }
     }
-
-    println!("{:?}", dp);
     return dp[s.len()][v.len()];
+}
+
+fn biggest_sum_of_average_partitions(n: Vec<u32>, m: u32) -> f64 {
+    // calculate average distance between i, j
+    let mut f = vec![vec![0.; n.len() + 1]; n.len() + 1];
+    for i in 1..=n.len() {
+        let mut j = 0;
+        while j < i {
+            let mut sum = 0.;
+            let mut k = j;
+            while k < i {
+                sum += n[k] as f64;
+                k += 1;
+            }
+            f[j][i] = sum / (i - j) as f64;
+            j += 1;
+        }
+    }
+
+    //
+    let mut dp = vec![vec![std::f64::MIN; m as usize + 1]; n.len() + 1];
+    dp[0][0] = 0.;
+    for i in 0..=n.len() {
+        let mut j = 0;
+        while j < i {
+            for k in 1..=m as usize {
+                let score = dp[j][k - 1] + f[j][i];
+                if dp[i][k] < score {
+                    dp[i][k] = score;
+                }
+            }
+            j += 1;
+        }
+    }
+
+    return dp[n.len()][m as usize];
 }
 
 #[cfg(test)]
@@ -188,8 +222,9 @@ mod tests {
     use crate::chapter5::dynamic_programming::subset_sum_times;
 
     use super::{
-        longest_common_sequence, subset_sum, subset_sum_limited_times, subset_sum_multiple_times,
-        subset_sum_unlimited, summer_holiday_happiness,
+        biggest_sum_of_average_partitions, longest_common_sequence, subset_sum,
+        subset_sum_limited_times, subset_sum_multiple_times, subset_sum_unlimited,
+        summer_holiday_happiness,
     };
 
     #[test]
@@ -238,5 +273,14 @@ mod tests {
     fn test_longest_common_sequence() {
         assert_eq!(longest_common_sequence("ABC", "AEBICD"), 3);
         assert_eq!(longest_common_sequence("DAC", "AEBICD"), 2);
+    }
+
+    #[test]
+    fn test_biggest_sum_of_average_partitions() {
+        assert_eq!(
+            biggest_sum_of_average_partitions(vec![9, 1, 2, 3, 9], 3),
+            20.
+        );
+        assert_eq!(biggest_sum_of_average_partitions(vec![14, 4, 9, 7], 1), 8.5);
     }
 }
