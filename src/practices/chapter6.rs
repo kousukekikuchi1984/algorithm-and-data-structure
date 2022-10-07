@@ -1,4 +1,5 @@
 use std::cmp::Ordering;
+use superslice::Ext;
 
 fn binary_search(nums: Vec<u32>, target_num: u32) -> bool {
     if nums.len() == 1 {
@@ -37,14 +38,12 @@ fn binary_search_key(nums: Vec<u32>, target_num: u32) -> Option<usize> {
 fn sum_of_two_integers(nums1: Vec<u32>, nums2: Vec<u32>, k: u32) -> u32 {
     let mut results = vec![0; nums1.len()];
     for i in 0..nums1.len() {
-        println!("{}, {:?}", i, nums1);
         if k > nums1[i] {
-            // must implement lower_bound function
-            let key = binary_search_key(nums2.to_vec(), k - nums1[i]);
-            results[i] = match key {
-                None => std::u32::MAX,
-                _ => nums2[key.unwrap() as usize] + nums1[i],
-            };
+            let idx = nums2.as_slice().upper_bound(&(k - nums1[i]));
+            match idx {
+                0 => results[i] = std::u32::MAX,
+                _ => results[i] = nums1[i] + nums2[idx],
+            }
         } else {
             results[i] = std::u32::MAX;
         }
@@ -84,17 +83,6 @@ mod tests {
 
     #[test]
     fn test_sum_of_two_intgers() {
-        // assert_eq!(
-        //     sum_of_two_integers(vec![1, 4, 6, 7, 8], vec![2, 6, 8, 14, 17], 20),
-        //     20
-        // );
-        // assert_eq!(
-        //     sum_of_two_integers(vec![1, 4, 6, 7, 8], vec![2, 6, 8, 14, 17], 21),
-        //     21
-        // );
-        assert_eq!(
-            sum_of_two_integers(vec![1, 4, 6, 7, 8], vec![2, 6, 8, 14, 17], 4),
-            6
-        );
+        assert_eq!(sum_of_two_integers(vec![4, 5, 8], vec![1, 4, 9], 10), 12);
     }
 }
