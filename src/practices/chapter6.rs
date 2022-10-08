@@ -55,10 +55,47 @@ fn sum_of_two_integers(nums1: Vec<u32>, nums2: Vec<u32>, k: u32) -> u32 {
     }
 }
 
+fn gunslinger(heights: Vec<u32>, velocities: Vec<u32>) -> u32 {
+    // upper limit
+    let mut m = 0;
+    for i in 0..heights.len() {
+        m = std::cmp::max(m, heights[i] + velocities[i] * heights.len() as u32)
+    }
+    let mut left = 0;
+    let mut right = m;
+    while right - left > 1 {
+        let mut t = vec![0; heights.len()];
+        let mid = (right + left) / 2;
+        let mut ok = true;
+        for i in 0..heights.len() {
+            if mid < heights[i] {
+                ok = false;
+            } else {
+                t[i] = (mid - heights[i]) / velocities[i];
+            }
+        }
+        //
+        t.sort();
+        //
+        for i in 0..heights.len() {
+            if t[i] < i as u32 {
+                ok = false;
+            }
+        }
+        if ok {
+            right = mid;
+        } else {
+            left = mid;
+        }
+    }
+
+    return right;
+}
+
 #[cfg(test)]
 mod tests {
 
-    use super::{binary_search, binary_search_key, sum_of_two_integers};
+    use super::{binary_search, binary_search_key, gunslinger, sum_of_two_integers};
 
     #[test]
     fn test_binary_search() {
@@ -84,5 +121,14 @@ mod tests {
     #[test]
     fn test_sum_of_two_intgers() {
         assert_eq!(sum_of_two_integers(vec![4, 5, 8], vec![1, 4, 9], 10), 12);
+    }
+
+    #[test]
+    fn test_gunslinger() {
+        assert_eq!(gunslinger(vec![5, 12, 14, 21], vec![6, 4, 7, 2]), 23);
+        assert_eq!(
+            gunslinger(vec![100, 100, 100, 100, 100, 100], vec![1, 1, 1, 1, 1, 1]),
+            105
+        );
     }
 }
