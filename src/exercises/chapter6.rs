@@ -51,7 +51,7 @@ pub fn darts(mut a: Vec<u32>, limit: u32) -> u32 {
         if limit < merged[m] {
             continue;
         }
-        let mut key = merged.upper_bound(&(limit - merged[m]));
+        let key = merged.upper_bound(&(limit - merged[m]));
         if key == 0 {
             continue;
         }
@@ -63,9 +63,34 @@ pub fn darts(mut a: Vec<u32>, limit: u32) -> u32 {
     return result;
 }
 
+pub fn aggressive_cows(mut a: Vec<u32>, m: u32) -> u32 {
+    a.sort(); // NlogN
+
+    let mut left = 0;
+    let mut right = std::u32::MAX;
+
+    while right - left > 1 {
+        let x = (left + right) / 2;
+        let mut count = 1;
+        let mut prev = 0;
+        for i in 0..a.len() {
+            if a[i] - a[prev] >= x {
+                count += 1;
+                prev = i;
+            }
+        }
+        if count >= m {
+            left = x;
+        } else {
+            right = x;
+        }
+    }
+    return left as u32;
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{darts, nth_rank, sum_of_three_sequences};
+    use super::{aggressive_cows, darts, nth_rank, sum_of_three_sequences};
 
     #[test]
     fn test_nth_rank() {
@@ -88,5 +113,10 @@ mod tests {
     fn test_darts() {
         assert_eq!(darts(vec![3, 14, 15, 9], 50), 48);
         assert_eq!(darts(vec![16, 11, 2], 21), 20);
+    }
+
+    #[test]
+    fn test_aggressive_cows() {
+        assert_eq!(aggressive_cows(vec![1, 2, 8, 4, 9], 3), 3);
     }
 }
