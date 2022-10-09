@@ -6,3 +6,4 @@
 ## TODO
 
 - [ ] 5.9 Least Merging Slimes Costs
+- [ ] 6.5, 6.6, 6.7
