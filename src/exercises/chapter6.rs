@@ -35,9 +35,37 @@ pub fn sum_of_three_sequences(mut a: Vec<u32>, mut b: Vec<u32>, mut c: Vec<u32>)
         .sum::<usize>() as u32
 }
 
+pub fn darts(mut a: Vec<u32>, limit: u32) -> u32 {
+    a.push(0);
+    let mut merged: Vec<u32> = vec![];
+
+    for i in 0..a.len() {
+        for j in 0..a.len() {
+            merged.push(a[i] + a[j]);
+        }
+    }
+    merged.sort();
+
+    let mut result = 0;
+    for m in 0..merged.len() {
+        if limit < merged[m] {
+            continue;
+        }
+        let mut key = merged.upper_bound(&(limit - merged[m]));
+        if key == 0 {
+            continue;
+        }
+        let val = merged[key - 1] + merged[m];
+        if result < val {
+            result = val;
+        }
+    }
+    return result;
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{nth_rank, sum_of_three_sequences};
+    use super::{darts, nth_rank, sum_of_three_sequences};
 
     #[test]
     fn test_nth_rank() {
@@ -54,5 +82,11 @@ mod tests {
             sum_of_three_sequences(vec![1, 1, 1], vec![2, 2, 2], vec![3, 3, 3]),
             27
         );
+    }
+
+    #[test]
+    fn test_darts() {
+        assert_eq!(darts(vec![3, 14, 15, 9], 50), 48);
+        assert_eq!(darts(vec![16, 11, 2], 21), 20);
     }
 }
