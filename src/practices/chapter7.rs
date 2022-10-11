@@ -44,9 +44,21 @@ pub fn segment_scheduling(starts: Vec<u32>, ends: Vec<u32>) -> u32 {
     return result;
 }
 
+pub fn multiple_array(a: Vec<u32>, b: Vec<u32>) -> u32 {
+    let mut result = 0;
+    for i in 0..a.len() {
+        let manipulatable = a[i] + result;
+        let remaining = manipulatable % b[i];
+        if remaining != 0 {
+            result += b[i] - remaining;
+        }
+    }
+    return result;
+}
+
 #[cfg(test)]
 mod test {
-    use super::{least_coin_usage, segment_scheduling};
+    use super::{least_coin_usage, multiple_array, segment_scheduling};
     #[test]
     fn test_least_coin_usage() {
         assert_eq!(least_coin_usage(666), 6);
@@ -56,5 +68,10 @@ mod test {
     #[test]
     fn test_segment_scheduling() {
         assert_eq!(segment_scheduling(vec![1, 4, 6], vec![5, 6, 8]), 2);
+    }
+
+    #[test]
+    fn test_multiple_array() {
+        assert_eq!(multiple_array(vec![3, 2, 9], vec![5, 7, 4]), 7);
     }
 }
