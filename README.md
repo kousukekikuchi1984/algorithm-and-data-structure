@@ -7,3 +7,4 @@
 
 - [ ] 5.9 Least Merging Slimes Costs
 - [ ] 6.5, 6.6, 6.7
+- [ ] 7.2 2D Plane 2N Points.
