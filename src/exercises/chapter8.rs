@@ -1,5 +1,3 @@
-use std::ptr::NonNull;
-
 pub fn vector() {
     let mut vector = vec![4, 3, 12, 7, 11, 1, 9, 8, 14, 6];
     println!("{}", vector[0]);
@@ -8,12 +6,75 @@ pub fn vector() {
     println!("{}", vector[2]);
 }
 
+struct Node<T> {
+    data: T,
+    next: Option<Box<Node<T>>>,
+}
+
+impl<T> Node<T> {
+    fn new(data: T, next: Option<Box<Node<T>>>) -> Self {
+        Self { data, next }
+    }
+}
+
+pub struct SimpleLinkedList<T> {
+    head: Option<Box<Node<T>>>,
+}
+
+impl<T> SimpleLinkedList<T> {
+    pub fn new() -> Self {
+        Self { head: None }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.head.is_none()
+    }
+
+    pub fn len(&self) -> usize {
+        let mut current_node = &self.head;
+        let mut size = 0;
+        while let Some(x) = current_node {
+            size += 1;
+            current_node = &x.next;
+        }
+        return size;
+    }
+
+    pub fn push(&mut self, element: T) {
+        let node = Box::new(Node::new(element, self.head.take()));
+        self.head = Some(node);
+    }
+
+    pub fn pop(&mut self) -> Option<T> {
+        if self.head.is_some() {
+            let head_node = self.head.take().unwrap();
+            self.head = head_node.next;
+            Some(head_node.data)
+        } else {
+            None
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use super::vector;
+    use super::{vector, SimpleLinkedList};
 
     #[test]
     fn test_vector() {
         vector();
+    }
+
+    #[test]
+    fn test_simple_linked_list() {
+        let mut actual: SimpleLinkedList<u32> = SimpleLinkedList::new();
+        actual.push(1);
+        actual.push(2);
+        actual.push(3);
+
+        assert_eq!(actual.pop(), Some(3));
+        assert_eq!(actual.pop(), Some(2));
+        assert_eq!(actual.pop(), Some(1));
+        assert_eq!(actual.pop(), None);
     }
 }
