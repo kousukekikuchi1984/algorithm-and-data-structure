@@ -1,5 +1,3 @@
-use std::collections::LinkedList;
-
 pub fn vector() {
     let mut vector = vec![4, 3, 12, 7, 11, 1, 9, 8, 14, 6];
     println!("{}", vector[0]);
@@ -26,20 +24,6 @@ pub struct SimpleLinkedList<T> {
 impl<T> SimpleLinkedList<T> {
     pub fn new() -> Self {
         Self { head: None }
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.head.is_none()
-    }
-
-    pub fn len(&self) -> usize {
-        let mut current_node = &self.head;
-        let mut size = 0;
-        while let Some(x) = current_node {
-            size += 1;
-            current_node = &x.next;
-        }
-        return size;
     }
 
     pub fn push(&mut self, element: T) {
