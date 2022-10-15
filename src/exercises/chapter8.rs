@@ -1,3 +1,5 @@
+use std::collections::LinkedList;
+
 pub fn vector() {
     let mut vector = vec![4, 3, 12, 7, 11, 1, 9, 8, 14, 6];
     println!("{}", vector[0]);
@@ -55,6 +57,8 @@ impl<T> SimpleLinkedList<T> {
         }
     }
 }
+
+// DoublyNode is implemented as LinkedList on built-in library
 
 #[cfg(test)]
 mod test {
