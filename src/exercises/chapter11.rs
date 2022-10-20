@@ -1,5 +1,3 @@
-use std::{cmp::Ordering, mem::swap};
-
 pub struct UnionFind {
     par: Vec<usize>,
     siz: Vec<usize>,
