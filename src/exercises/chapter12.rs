@@ -12,36 +12,52 @@ pub fn insert_sort(mut v: Vec<u32>) -> Vec<u32> {
     v
 }
 
-fn merge_sort<T: Ord + Copy + Debug>(data: &mut [T]) {
-    if data.len() <= 1 {
-        return;
-    }
+fn merge_sort(arr: Vec<u32>) -> Vec<u32> {
+    fn _merge(mut arr: Vec<u32>, left: usize, mid: usize, right: usize) -> Vec<u32> {
+        let n1 = mid - left;
+        let n2 = right - mid;
+        let l1 = arr.clone();
+        let r1 = arr.clone();
+        let l = &l1[left..mid];
+        let r = &r1[mid..right];
 
-    let mut right = data.len();
-    let middle = match right % 2 {
-        0 => right / 2,
-        1 => (right - 1) / 2,
-        _ => panic!(),
-    };
-    let mut left = 0;
-
-    merge_sort(&mut data[left..middle]);
-    merge_sort(&mut data[middle..right]);
-
-    let mut v = data.to_vec();
-    v[middle..right].reverse();
-
-    println!("{:?}", v);
-
-    for i in 0..right - 1 {
-        if v[left] > v[right] {
-            data[i] = v[right];
-            right -= 1;
-        } else {
-            data[i] = v[left];
-            left += 1;
+        let mut i = 0;
+        let mut j = 0;
+        let mut k = left;
+        while i < n1 && j < n2 {
+            if l[i] < r[j] {
+                arr[k] = l[i];
+                i += 1;
+            } else {
+                arr[k] = r[j];
+                j += 1;
+            }
+            k += 1;
         }
+        while i < n1 {
+            arr[k] = l[i];
+            i += 1;
+            k += 1;
+        }
+        while j < n2 {
+            arr[k] = r[j];
+            j += 1;
+            k += 1;
+        }
+        arr
     }
+    fn _merge_sort(mut arr: Vec<u32>, left: usize, right: usize) -> Vec<u32> {
+        if right - 1 > left {
+            let mid = left + (right - left) / 2;
+            arr = _merge_sort(arr, left, mid);
+            arr = _merge_sort(arr, mid, right);
+            arr = _merge(arr, left, mid, right);
+        }
+        arr
+    }
+
+    let size = arr.len();
+    _merge_sort(arr, 0, size)
 }
 
 #[cfg(test)]
@@ -56,8 +72,9 @@ mod test {
 
     #[test]
     fn test_merge_sort() {
-        let mut v = vec![1, 5, 2, 4, 3];
-        merge_sort(&mut v);
-        assert_eq!(&mut v, &mut vec![1, 2, 3, 4, 5]);
+        assert_eq!(
+            merge_sort(vec![64, 34, 25, 8, 22, 11, 9]),
+            vec![8, 9, 11, 22, 25, 34, 64]
+        );
     }
 }
