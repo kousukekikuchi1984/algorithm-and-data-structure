@@ -60,10 +60,48 @@ fn merge_sort(arr: Vec<u32>) -> Vec<u32> {
     _merge_sort(arr, 0, size)
 }
 
+pub fn quick_sort(arr: Vec<u32>) -> Vec<u32> {
+    fn _partition(arr: &mut Vec<u32>, left: isize, right: isize) -> isize {
+        let pivot = right as usize;
+        let mut store_index = left - 1;
+        let mut last_index = right;
+
+        loop {
+            store_index += 1;
+            while arr[store_index as usize] < arr[pivot] {
+                store_index += 1;
+            }
+            last_index -= 1;
+            while last_index >= 0 && arr[last_index as usize] > arr[pivot] {
+                last_index -= 1;
+            }
+            if store_index >= last_index {
+                break;
+            } else {
+                arr.swap(store_index as usize, last_index as usize);
+            }
+        }
+        arr.swap(store_index as usize, pivot as usize);
+        store_index
+    }
+    fn _quick_sort(arr: &mut Vec<u32>, left: isize, right: isize) {
+        if left < right {
+            let p = _partition(arr, left, right);
+            _quick_sort(arr, left, p - 1);
+            _quick_sort(arr, p + 1, right);
+        }
+    }
+
+    let size = arr.len() - 1;
+    let mut a = arr.to_vec();
+    _quick_sort(&mut a, 0, size as isize);
+    a
+}
+
 #[cfg(test)]
 mod test {
 
-    use super::{insert_sort, merge_sort};
+    use super::{insert_sort, merge_sort, quick_sort};
 
     #[test]
     fn test_insert_sort() {
@@ -74,6 +112,14 @@ mod test {
     fn test_merge_sort() {
         assert_eq!(
             merge_sort(vec![64, 34, 25, 8, 22, 11, 9]),
+            vec![8, 9, 11, 22, 25, 34, 64]
+        );
+    }
+
+    #[test]
+    fn test_quick_sort() {
+        assert_eq!(
+            quick_sort(vec![64, 34, 25, 8, 22, 11, 9]),
             vec![8, 9, 11, 22, 25, 34, 64]
         );
     }
