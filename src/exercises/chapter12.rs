@@ -98,10 +98,52 @@ pub fn quick_sort(arr: Vec<u32>) -> Vec<u32> {
     a
 }
 
+pub fn heap_sort(a: Vec<u32>) -> Vec<u32> {
+    let mut arr = a.to_vec();
+    if a.len() <= 1 {
+        return arr;
+    }
+
+    heapify(&mut arr);
+
+    for end in (1..arr.len()).rev() {
+        arr.swap(0, end);
+        move_down(&mut arr[..end], 0)
+    }
+    return arr;
+}
+
+fn heapify(arr: &mut Vec<u32>) {
+    let last_parent = (arr.len() - 2) / 1;
+    for i in (0..=last_parent).rev() {
+        move_down(arr, i);
+    }
+}
+
+fn move_down(arr: &mut [u32], mut root: usize) {
+    let last = arr.len() - 1;
+    loop {
+        let left = 2 * root + 1;
+        if left > last {
+            break;
+        }
+        let right = left + 1;
+        let max = if right <= last && arr[right] > arr[left] {
+            right
+        } else {
+            left
+        };
+        if arr[max] > arr[root] {
+            arr.swap(root, max);
+        }
+        root = max;
+    }
+}
+
 #[cfg(test)]
 mod test {
 
-    use super::{insert_sort, merge_sort, quick_sort};
+    use super::{heap_sort, insert_sort, merge_sort, quick_sort};
 
     #[test]
     fn test_insert_sort() {
@@ -120,6 +162,14 @@ mod test {
     fn test_quick_sort() {
         assert_eq!(
             quick_sort(vec![64, 34, 25, 8, 22, 11, 9]),
+            vec![8, 9, 11, 22, 25, 34, 64]
+        );
+    }
+
+    #[test]
+    fn test_heap_sort() {
+        assert_eq!(
+            heap_sort(vec![64, 34, 25, 8, 22, 11, 9]),
             vec![8, 9, 11, 22, 25, 34, 64]
         );
     }
