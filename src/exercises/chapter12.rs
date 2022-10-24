@@ -1,5 +1,3 @@
-use std::fmt::Debug;
-
 pub fn insert_sort(mut v: Vec<u32>) -> Vec<u32> {
     println!("{:?}", v);
     for i in 1..v.len() {
@@ -140,10 +138,42 @@ fn move_down(arr: &mut [u32], mut root: usize) {
     }
 }
 
+pub fn bucket_sort(a: Vec<u32>) -> Vec<u32> {
+    let arr = a.to_vec();
+
+    if arr.is_empty() {
+        return vec![];
+    }
+
+    let max = *arr.iter().max().unwrap();
+    let len = arr.len();
+    let mut buckets = vec![vec![]; len + 1];
+
+    for x in &arr {
+        let idx = len * *x as usize / max as usize;
+        buckets[idx].push(*x as usize);
+    }
+
+    for bucket in buckets.iter_mut() {
+        // this should be insertion sort
+        bucket.sort();
+    }
+
+    let mut result = vec![];
+
+    for bucket in buckets {
+        for x in bucket {
+            result.push(x as u32);
+        }
+    }
+
+    result
+}
+
 #[cfg(test)]
 mod test {
 
-    use super::{heap_sort, insert_sort, merge_sort, quick_sort};
+    use super::{bucket_sort, heap_sort, insert_sort, merge_sort, quick_sort};
 
     #[test]
     fn test_insert_sort() {
@@ -170,6 +200,14 @@ mod test {
     fn test_heap_sort() {
         assert_eq!(
             heap_sort(vec![64, 34, 25, 8, 22, 11, 9]),
+            vec![8, 9, 11, 22, 25, 34, 64]
+        );
+    }
+
+    #[test]
+    fn test_bucket_sort() {
+        assert_eq!(
+            bucket_sort(vec![64, 34, 25, 8, 22, 11, 9]),
             vec![8, 9, 11, 22, 25, 34, 64]
         );
     }
