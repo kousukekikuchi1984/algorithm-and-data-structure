@@ -10,3 +10,4 @@
 - [ ] 7.2 2D Plane 2N Points and below.
 - [ ] 9.2 and 9.3
 - [ ] 11.3 and 11.4
+- [ ] 12,3 below
