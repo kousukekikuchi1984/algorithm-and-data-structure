@@ -51,6 +51,29 @@ impl Graph {
             }
         }
     }
+
+    pub fn dfs(&self, s: usize) -> Vec<i32> {
+        let n = self.v.len();
+        let mut dist: Vec<i32> = vec![-1; n];
+        let mut queue: VecDeque<usize> = VecDeque::new();
+
+        dist[s] = 0;
+        queue.push_front(s);
+
+        while queue.is_empty() {
+            let v = queue.pop_front().unwrap();
+            for x in &self.v[v] {
+                if dist[*x] != -1 {
+                    continue;
+                }
+
+                dist[*x] = dist[v] + 1;
+                queue.push_back(*x);
+            }
+        }
+
+        dist
+    }
 }
 
 #[cfg(test)]
@@ -65,6 +88,19 @@ mod test {
         graph.v.push(vec![3]);
         let actual = graph.search_by_recursive(0);
         let expected = vec![true, false, false];
+        assert_eq!(actual, expected);
+        let actual = graph.search(0);
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_dfs() {
+        let mut graph = Graph::new();
+        graph.v.push(vec![1, 2]);
+        graph.v.push(vec![3]);
+        graph.v.push(vec![3]);
+        let actual = graph.dfs(0);
+        let expected = vec![0, -1, -1];
         assert_eq!(actual, expected);
     }
 }
