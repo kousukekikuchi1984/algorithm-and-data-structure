@@ -76,6 +76,35 @@ impl Graph {
     }
 }
 
+pub struct BipartiteGraph {
+    v: Vec<Vec<usize>>,
+}
+
+impl BipartiteGraph {
+    pub fn new() -> Self {
+        Self { v: vec![] }
+    }
+
+    fn _dfs(&self, color: &mut Vec<isize>, v: usize, cur: usize) -> bool {
+        for next_v in &self.v[v] {
+            if color.get(*next_v) == None {
+                continue;
+            } else {
+                if color[*next_v] == cur as isize {
+                    return color[*next_v] != cur as isize;
+                }
+            }
+            return self.dfs(*next_v, 1 - cur);
+        }
+        return true;
+    }
+
+    pub fn dfs(&self, v: usize, cur: usize) -> bool {
+        let mut color: Vec<isize> = vec![-1; self.v.len()];
+        self._dfs(&mut color, v, cur)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::Graph;
@@ -102,5 +131,10 @@ mod test {
         let actual = graph.dfs(0);
         let expected = vec![0, -1, -1];
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_bipartite_graph() {
+        let mut graph = Graph::new();
     }
 }
