@@ -107,7 +107,7 @@ impl BipartiteGraph {
 
 #[cfg(test)]
 mod test {
-    use super::Graph;
+    use super::{BipartiteGraph, Graph};
 
     #[test]
     fn test_search() {
@@ -135,6 +135,12 @@ mod test {
 
     #[test]
     fn test_bipartite_graph() {
-        let mut graph = Graph::new();
+        let mut graph = BipartiteGraph::new();
+        graph.v.push(vec![1, 2]);
+        graph.v.push(vec![3]);
+        graph.v.push(vec![3]);
+        let actual = graph.dfs(0, 1);
+        let expected = true;
+        assert_eq!(actual, expected);
     }
 }
