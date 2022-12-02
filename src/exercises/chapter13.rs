@@ -1,3 +1,4 @@
+use core::panic;
 use std::collections::VecDeque;
 
 pub struct Graph {
@@ -87,14 +88,17 @@ impl BipartiteGraph {
 
     fn _dfs(&self, color: &mut Vec<isize>, v: usize, cur: usize) -> bool {
         for next_v in &self.v[v] {
-            if color.get(*next_v) == None {
-                continue;
-            } else {
-                if color[*next_v] == cur as isize {
-                    return color[*next_v] != cur as isize;
+            let val = color[*next_v];
+            match val {
+                -1 => self.dfs(*next_v, 1 - cur),
+                0 | 1 => {
+                    if val == cur as isize {
+                        return false;
+                    }
+                    continue;
                 }
-            }
-            return self.dfs(*next_v, 1 - cur);
+                _ => panic!(),
+            };
         }
         return true;
     }
@@ -165,6 +169,7 @@ mod test {
         graph.v.push(vec![1, 2]);
         graph.v.push(vec![3]);
         graph.v.push(vec![3]);
+        graph.v.push(vec![]);
         let actual = graph.dfs(0, 1);
         let expected = true;
         assert_eq!(actual, expected);
