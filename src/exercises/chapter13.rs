@@ -105,9 +105,35 @@ impl BipartiteGraph {
     }
 }
 
+pub struct FindPathGraph {
+    v: Vec<Vec<usize>>,
+}
+
+impl FindPathGraph {
+    pub fn new() -> Self {
+        Self { v: vec![] }
+    }
+
+    fn _dfs(&self, v: usize, seen: &mut Vec<bool>) {
+        seen[v] = true;
+        for next_v in &self.v[v] {
+            if seen[*next_v] {
+                continue;
+            }
+            self._dfs(*next_v, seen);
+        }
+    }
+
+    pub fn dfs(&self, s: usize, t: usize) -> bool {
+        let mut seen = vec![false; self.v.len()];
+        self._dfs(s, &mut seen);
+        return seen[t];
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use super::{BipartiteGraph, Graph};
+    use super::{BipartiteGraph, FindPathGraph, Graph};
 
     #[test]
     fn test_search() {
@@ -140,6 +166,25 @@ mod test {
         graph.v.push(vec![3]);
         graph.v.push(vec![3]);
         let actual = graph.dfs(0, 1);
+        let expected = true;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_find_path_graph() {
+        let mut graph = FindPathGraph::new();
+        graph.v.push(vec![1, 2]);
+        graph.v.push(vec![3]);
+        graph.v.push(vec![4]);
+        graph.v.push(vec![5]);
+        graph.v.push(vec![5]);
+        graph.v.push(vec![]);
+
+        let actual = graph.dfs(1, 2);
+        let expected = false;
+        assert_eq!(actual, expected);
+
+        let actual = graph.dfs(1, 3);
         let expected = true;
         assert_eq!(actual, expected);
     }
